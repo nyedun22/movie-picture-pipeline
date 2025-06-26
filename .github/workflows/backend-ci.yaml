@@ -1,12 +1,68 @@
-name: backend-ci-workflow
-#include job which runs linting
+name: Backend Continuous Integration
 
-#include job which runs test linting which should be done in parallel
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
-# job and lint should be complete prior to proceeding to build step
+jobs:      
 
-#include job which builds app using docker
+  Linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#pipeline should execute automatically on pull_request
-#pipeline should be able to run manually
-#run without errors & all tests passing & no output errors
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with: 
+          python-version: "3.10"
+  
+      - name: Install dependencies
+        working-directory: starter/backend 
+        run:  |
+          python -m pip install --upgrade pip
+          pip install flake8
+          pip install pipenv
+
+      - name: Run lint
+        working-directory: starter/backend
+        run: pipenv run flake8 .
+
+  Test:
+    runs-on: ubuntu-latest
+    needs: Linting
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        working-directory: starter/backend 
+        run:  |
+          python -m pip install --upgrade pip
+          pip install pipenv
+          pip install pytest
+
+      - name: Run tests
+        working-directory: starter/backend
+        run: pipenv run pytest
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: [Linting, Test]
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker Image
+        working-directory: starter/backend
+        run: |
+          docker build --tag mp-backend:latest .

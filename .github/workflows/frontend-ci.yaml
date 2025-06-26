@@ -1,33 +1,4 @@
 name: Frontend Continuous Integration
-on: 
-  workflow_dispatch:
-  #pipeline must be executed automatically on pull_request
-  pull_request:
-    branches:
-      -main
-jobs:
-#jobs to include: 
-# 1. Lint Job 
-  Lint: 
-    runs on: ubuntu-latest
-    environment: development #update with environment name when created in github
-
-    steps:    
-  #steps to include: 
-    # checkout code
-      name: check repository
-      uses: actions/checkout@v3
-
-    # setup NodeJS
-      name: use node.js
-      uses: actions/setup-node@v3
-      with: 
-        node-version: 18
-        # perform cache action to restore cache before dependency install 
-        cache: 'npm'
-        cache-dependency-path: starter/frontend/package-lock.json
-
-   name: Frontend Continuous Integration
 
 on: 
   workflow_dispatch:
@@ -92,7 +63,7 @@ jobs:
 
   # Build Job
   Build: 
-    needs: [Lint, Test]
+    needs: [Linting, Test]
     runs-on: ubuntu-latest
 
     steps:
