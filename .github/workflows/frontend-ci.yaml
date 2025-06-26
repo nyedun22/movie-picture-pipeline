@@ -1,0 +1,116 @@
+name: Frontend Continuous Integration
+on: 
+  workflow_dispatch:
+  #pipeline must be executed automatically on pull_request
+  pull_request:
+    branches:
+      -main
+jobs:
+#jobs to include: 
+# 1. Lint Job 
+  Lint: 
+    runs on: ubuntu-latest
+    environment: development #update with environment name when created in github
+
+    steps:    
+  #steps to include: 
+    # checkout code
+      name: check repository
+      uses: actions/checkout@v3
+
+    # setup NodeJS
+      name: use node.js
+      uses: actions/setup-node@v3
+      with: 
+        node-version: 18
+        # perform cache action to restore cache before dependency install 
+        cache: 'npm'
+        cache-dependency-path: starter/frontend/package-lock.json
+
+   name: Frontend Continuous Integration
+
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Lint Job 
+  Lint: 
+    runs-on: ubuntu-latest
+    environment: development  # Ensure this environment is defined in GitHub
+
+    steps:    
+      # Checkout code
+      - name: Check repository
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: starter/frontend/package-lock.json
+
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: starter/frontend
+        run: npm ci
+
+      # Run npm run lint command
+      - name: Run lint
+        run: npm run lint
+        working-directory: starter/frontend
+
+  # Test Job
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - name: Check repository
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: starter/frontend/package-lock.json
+
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: starter/frontend
+        run: npm ci
+
+      # Run npm run test command
+      - name: Run tests
+        run: npm run test
+        working-directory: starter/frontend
+
+  # Build Job
+  Build: 
+    needs: [Lint, Test]
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Check repository
+        uses: actions/checkout@v3
+    
+      # Setup Node.js
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: starter/frontend/package-lock.json
+
+      # Build Docker image
+      - name: Build and Run Docker Image
+        run: |
+          cd starter/frontend
+          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
+          docker run --name mp-frontend -p 3000:3000 -d mp-frontend

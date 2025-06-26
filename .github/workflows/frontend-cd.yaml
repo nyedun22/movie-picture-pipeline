@@ -1,0 +1,26 @@
+# steps to include:
+
+  # 1. run linting and passes
+
+  # 2. runs tests and passes
+
+  # 3. builds app using docker ONLY after linting and testing are complete (use needs). 
+  # This step should also include build-args to ensure app is built with env variable REACT_APP_MOVIE_API_URL
+
+  # 4. utilizes aws-actions/amazon-ecr-login for logging into ECR (using 3rd party actions)
+  # also access github secrets for credentials for security
+
+  # 5. push docker image to ECR in aws
+
+  # 6. deploy app via kubectl to EKS cluster
+
+  # The pipeline should be executed automatically on merges to the main branch 
+  #The pipeline should be able to be run manually for verification purposes 
+  # The pipeline should be running without errors, with all tests passing and no output failures from any of the steps
+
+  # tests to check: 
+    #If there are AWS credentials anywhere in any of the pipelines = FAIL
+    #If any of the pipelines are failing to run or have failed steps = FAIL
+    #If any of the pipelines pass when there's a test failure = FAIL (will provide steps on how to simulate test failure)
+    #If the docker image doesn't get uploaded to ECR = FAIL
+    #If the application isn't successfully running on the cluster = FAIL (the frontend should be able to pull the list of movies and verify the environment variable was passed correctly)

@@ -1,0 +1,15 @@
+
+# include step that utilizes aws-actions/amazon-ecr-login action for logging into ECR. (using 3rd party actions) The ECR login step should also be accessing Github Secrets for credentials. (secure approach)
+
+#step that pushes the docker image to ECR in the AWS account. There should be a step that deploys the application using kubectl to the Kubernetes cluster
+
+#The pipeline should be executed automatically on merges to the main branch 
+#The pipeline should be able to be run manually for verification purposes 
+#The pipeline should be running without errors, with all tests passing and no output failures from any of the steps
+
+#Tests to run and pass
+#If there are AWS credentials anywhere in any of the pipelines = FAIL
+#If any of the pipelines are failing to run or have failed steps = FAIL
+#If any of the pipelines pass when there's a test failure = FAIL (will provide steps on how to simulate test failure)
+#If the docker image doesn't get uploaded to ECR = FAIL
+#If the application isn't successfully running on the cluster = FAIL

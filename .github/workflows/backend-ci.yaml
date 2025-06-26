@@ -1,0 +1,12 @@
+name: backend-ci-workflow
+#include job which runs linting
+
+#include job which runs test linting which should be done in parallel
+
+# job and lint should be complete prior to proceeding to build step
+
+#include job which builds app using docker
+
+#pipeline should execute automatically on pull_request
+#pipeline should be able to run manually
+#run without errors & all tests passing & no output errors
